@@ -13,6 +13,15 @@ body {
     font-size: 1.5em;
     font-weight: bold;
 }
+.stats-rollup {
+    padding: 10px 0 25px 0;
+    text-align: center;
+}
+.stats-rollup > h3 {
+    display: inline;
+    margin: 0 1em;
+    padding: 0;
+}
 .table thead > tr > th,
 .table tbody > tr > th,
 .table tfoot > tr > th,

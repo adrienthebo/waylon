@@ -38,6 +38,17 @@ body {
 <% if(!nirvana) %>
 <div class="container waylon">
     <br />
+    <div class="container stats-rollup">
+        <h3>Successful
+            <span class="label label-success"><%= successful_builds.count %></span>
+        </h3>
+        <h3>Failed
+            <span class="label label-danger"><%= failed_builds.count %></span>
+        </h3>
+        <h3>Total
+            <span class="label label-info"><%= successful_builds.count + failed_builds.count %></span>
+        </h3>
+    </div>
     <table class="table">
         <% failed_builds.sort.each do |build| %>
         <tr>
