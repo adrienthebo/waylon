@@ -14,6 +14,7 @@ class Waylon < Sinatra::Application
     # and get the status of the jobs specified in the config.
     filter            = []
     failed_builds     = []
+    building_builds   = []
     successful_builds = []
 
     config['jobs'].each do |hash|
@@ -29,6 +30,14 @@ class Waylon < Sinatra::Application
         # alphanumeric order. If you want them to be displayed differently
         # (e.g. last-run at the top), take a look at list_details(job_name).
         # That approach is slightly more complicated though.
+
+        # Get the list of jobs that are building. If the job is in the job
+        # filter, append it to the array that we'll display in the dashboard.
+        client.job.list_by_status('running').each do |building_build|
+          if(filter.include?(building_build)) then
+            building_builds << building_build
+          end
+        end
 
         # Get the list of failed jobs. If the job is in the job filter,
         # append it to the array that we'll display in the dashboard.
@@ -62,6 +71,7 @@ class Waylon < Sinatra::Application
         :refresh_interval  => refresh_interval,
         :nirvana           => nirvana,
         :nirvana_img       => nirvana_img,
+        :building_builds   => building_builds,
         :failed_builds     => failed_builds,
         :successful_builds => successful_builds,
     }

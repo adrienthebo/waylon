@@ -42,14 +42,21 @@ body {
         <h3>Successful
             <span class="label label-success"><%= successful_builds.count %></span>
         </h3>
+        <h3>Building
+            <span class="label label-warning"><%= building_builds.count %></span>
         <h3>Failed
             <span class="label label-danger"><%= failed_builds.count %></span>
         </h3>
         <h3>Total
-            <span class="label label-info"><%= successful_builds.count + failed_builds.count %></span>
+            <span class="label label-info"><%= successful_builds.count + building_builds.count + failed_builds.count %></span>
         </h3>
     </div>
     <table class="table">
+        <% building_builds.sort.each do |build| %>
+        <tr>
+            <td class="building-build"><%= build %></td>
+        </tr>
+        <% end %>
         <% failed_builds.sort.each do |build| %>
         <tr>
             <td class="failed-build"><%= build %></td>
