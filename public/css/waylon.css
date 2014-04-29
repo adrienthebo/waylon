@@ -27,12 +27,8 @@ body {
     font-weight: bold;
 }
 .failed-build {
-    background-image: -webkit-linear-gradient(top, #d9534f 0%, #c9302c 100%);
-    background-image:         linear-gradient(to bottom, #d9534f 0%, #c9302c 100%);
-    background-repeat: repeat-x;
+    background-color: #d9534f;
 }
 .successful-build {
-    background-image: -webkit-linear-gradient(top, #5cb85c 0%, #449d44 100%);
-    background-image:         linear-gradient(to bottom, #5cb85c 0%, #449d44 100%);
-    background-repeat: repeat-x;
+    background-color: #5cb85c;
 }
