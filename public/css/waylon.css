@@ -10,14 +10,26 @@ body {
     font-size: 1.5em;
     font-weight: bold;
 }
+.table thead > tr > th,
+.table tbody > tr > th,
+.table tfoot > tr > th,
+.table thead > tr > td,
+.table tbody > tr > td,
+.table tfoot > tr > td {
+    border: 1px solid white;
+}
 .failed-build, .successful-build {
     color: white;
     font-size: 1.5em;
     font-weight: bold;
 }
 .failed-build {
-    background-color: #d9534f;
+    background-image: -webkit-linear-gradient(top, #d9534f 0%, #c9302c 100%);
+    background-image:         linear-gradient(to bottom, #d9534f 0%, #c9302c 100%);
+    background-repeat: repeat-x;
 }
 .successful-build {
-    background-color: #5cb85c;
+    background-image: -webkit-linear-gradient(top, #5cb85c 0%, #449d44 100%);
+    background-image:         linear-gradient(to bottom, #5cb85c 0%, #449d44 100%);
+    background-repeat: repeat-x;
 }
