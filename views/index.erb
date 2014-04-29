@@ -8,7 +8,7 @@
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/waylon.css" rel="stylesheet">
 
-<% # If all builds are green, override the stylesheet with the CSS below %>
+<% # If all jobs are green, override the stylesheet with the CSS below %>
 <% if(nirvana) %>
 <style type="text/css">
 body {
@@ -40,31 +40,31 @@ body {
     <br />
     <div class="container stats-rollup">
         <h3>Successful
-            <span class="label label-success"><%= successful_builds.count %></span>
+            <span class="label label-success"><%= successful_jobs.count %></span>
         </h3>
         <h3>Building
-            <span class="label label-warning"><%= building_builds.count %></span>
+            <span class="label label-warning"><%= building_jobs.count %></span>
         <h3>Failed
-            <span class="label label-danger"><%= failed_builds.count %></span>
+            <span class="label label-danger"><%= failed_jobs.count %></span>
         </h3>
         <h3>Total
-            <span class="label label-info"><%= successful_builds.count + building_builds.count + failed_builds.count %></span>
+            <span class="label label-info"><%= successful_jobs.count + building_jobs.count + failed_jobs.count %></span>
         </h3>
     </div>
     <table class="table">
-        <% building_builds.sort.each do |build| %>
+        <% building_jobs.sort.each do |job| %>
         <tr>
-            <td class="building-build"><%= build %></td>
+            <td class="building-job"><%= job %></td>
         </tr>
         <% end %>
-        <% failed_builds.sort.each do |build| %>
+        <% failed_jobs.sort.each do |job| %>
         <tr>
-            <td class="failed-build"><%= build %></td>
+            <td class="failed-job"><%= job %></td>
         </tr>
         <% end %>
-        <% successful_builds.sort.each do |build| %>
+        <% successful_jobs.sort.each do |job| %>
         <tr>
-            <td class="successful-build"><%= build %></td>
+            <td class="successful-job"><%= job %></td>
         </tr>
         <% end %>
     </table>

@@ -30,17 +30,17 @@ body {
 .table tfoot > tr > td {
     border: 1px solid white;
 }
-.building-build, .failed-build, .successful-build {
+.building-job, .failed-job, .successful-job {
     color: white;
     font-size: 1.5em;
     font-weight: bold;
 }
-.building-build {
+.building-job {
     background-color: #f0ad4e;
 }
-.failed-build {
+.failed-job {
     background-color: #d9534f;
 }
-.successful-build {
+.successful-job {
     background-color: #5cb85c;
 }
