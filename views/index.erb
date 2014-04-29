@@ -1,16 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Waylon</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/waylon.css" rel="stylesheet">
-  </head>
-  <body>
-    <h1>Hello, world!</h1>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="<%= refresh_interval %>">
+<title>Waylon</title>
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/waylon.css" rel="stylesheet">
 
-    <script src="js/jquery-1.11.0.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-  </body>
+<% # If all builds are green, override the stylesheet with the CSS below %>
+<% if(nirvana) %>
+<style type="text/css">
+body {
+    background-image: url(<%= nirvana_img %>);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+.navbar-fixed-top {
+    background: #333;
+    opacity: 0.5;
+}
+</style>
+<% end %>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <span class="navbar-brand">Waylon</span>
+        </div>
+    </div>
+</div>
+
+<% if(!nirvana) %>
+<div class="container waylon">
+    <br />
+    <table class="table">
+        <% failed_builds.sort.each do |build| %>
+        <tr>
+            <td class="failed-build"><%= build %></td>
+        </tr>
+        <% end %>
+        <% successful_builds.sort.each do |build| %>
+        <tr>
+            <td class="successful-build"><%= build %></td>
+        </tr>
+        <% end %>
+    </table>
+</div>
+<% end %>
+
+<script src="js/jquery-1.11.0.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+</body>
 </html>
