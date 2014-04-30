@@ -13,6 +13,7 @@ class Waylon < Sinatra::Application
     # For each Jenkins instance in "jobs", connect to the server,
     # and get the status of the jobs specified in the config.
     filter          = []
+    errors          = []
     failed_jobs     = []
     building_jobs   = []
     successful_jobs = []
@@ -22,6 +23,14 @@ class Waylon < Sinatra::Application
         filter += hash[server] # job the job filter
 
         client = JenkinsApi::Client.new(:server_url => server)
+
+        # Attempt to establish a connection to `server`
+        begin
+          client.get_root
+        rescue SocketError
+          errors << "Unable to connect to server: #{server}"
+          next
+        end
 
         # list_by_status() gets an alphanumeric list of jobs based on the
         # friendly status returned by color_to_status(). We break this up
@@ -71,8 +80,9 @@ class Waylon < Sinatra::Application
         :refresh_interval => refresh_interval,
         :nirvana          => nirvana,
         :nirvana_img      => nirvana_img,
-        :building_jobs      => building_jobs,
+        :errors           => errors,
         :failed_jobs      => failed_jobs,
+        :building_jobs    => building_jobs,
         :successful_jobs  => successful_jobs,
     }
   end

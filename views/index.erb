@@ -6,6 +6,7 @@
 <meta http-equiv="refresh" content="<%= refresh_interval %>">
 <title>Waylon</title>
 <link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/bootstrap-theme.min.css" rel="stylesheet">
 <link href="css/waylon.css" rel="stylesheet">
 
 <% # If all jobs are green, override the stylesheet with the CSS below %>
@@ -38,6 +39,13 @@ body {
 <% if(!nirvana) %>
 <div class="container waylon">
     <br />
+    <% if(!errors.empty?) %>
+        <% errors.each do |error| %>
+        <div class="alert alert-danger">
+            <strong>Oh snap!</strong> <%= error %>
+        </div>
+        <% end %>
+    <% end %>
     <div class="container stats-rollup">
         <h3>Successful
             <span class="label label-success"><%= successful_jobs.count %></span>
