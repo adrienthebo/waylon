@@ -69,7 +69,7 @@ class Waylon < Sinatra::Application
     # If all jobs are green, display the image of the day. These images
     # are located in `public/img/` and follow the convention `imgNN.png`,
     # where NN is the day (number) of the week, starting with 0 (Sunday).
-    if(failed_jobs.empty?) then
+    if(failed_jobs.empty? and errors.empty?) then
       nirvana = true
       wday = Time.new.wday
       nirvana_img = "img/img0#{wday}.png"
