@@ -40,6 +40,10 @@ Maximum connections set to 1024
 Listening on 0.0.0.0:9292, CTRL+C to stop
 ```
 
+## Screenshots
+![Waylon radiator screenshot (builds)](http://rogerignazio.com/projects/waylon/waylon-screenshot-builds.png)
+![Waylon radiator screenshot (nirvana)](http://rogerignazio.com/projects/waylon/waylon-screenshot-nirvana.png)
+
 ## Credits
 This application makes use of and/or re-distributes the following open source
 software:
