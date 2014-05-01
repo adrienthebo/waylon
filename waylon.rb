@@ -32,35 +32,19 @@ class Waylon < Sinatra::Application
           next
         end
 
-        # list_by_status() gets an alphanumeric list of jobs based on the
-        # friendly status returned by color_to_status(). We break this up
-        # into two arrays: failed and successful. The failed jobs will
-        # display above the successful jobs in the dashboard, in
-        # alphanumeric order. If you want them to be displayed differently
-        # (e.g. last-run at the top), take a look at list_details(job_name).
-        # That approach is slightly more complicated though.
-
-        # Get the list of jobs that are building. If the job is in the job
-        # filter, append it to the array that we'll display in the dashboard.
-        client.job.list_by_status('running').each do |building_job|
-          if(filter.include?(building_job)) then
-            building_jobs << building_job
-          end
-        end
-
-        # Get the list of failed jobs. If the job is in the job filter,
-        # append it to the array that we'll display in the dashboard.
-        client.job.list_by_status('failure').each do |failed_job|
-          if(filter.include?(failed_job)) then
-             failed_jobs << failed_job
-          end
-        end
-
-        # Get the list of successful jobs. If the job is in the job filter,
-        # append it to the array that we'll display in the dashboard.
-        client.job.list_by_status('success').each do |successful_job|
-          if(filter.include?(successful_job)) then
-             successful_jobs << successful_job
+        # Get all the jobs and job details from the server. If the job
+        # is in the job filter, check its status, and append it to the
+        # relevant array.
+        client.job.list_all_with_details.each do |job|
+          if(filter.include?(job['name'])) then
+            case client.job.color_to_status(job['color'])
+            when 'running'
+              building_jobs << job
+            when 'failure'
+              failed_jobs << job
+            when 'success'
+              successful_jobs << job
+            end
           end
         end
       end

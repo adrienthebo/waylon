@@ -39,6 +39,7 @@ body {
 <% if(!nirvana) %>
 <div class="container waylon">
     <br />
+
     <% if(!errors.empty?) %>
         <% errors.each do |error| %>
         <div class="alert alert-danger">
@@ -46,41 +47,40 @@ body {
         </div>
         <% end %>
     <% end %>
+
     <div class="container stats-rollup">
-        <h3>Successful
-            <span class="label label-success"><%= successful_jobs.count %></span>
-        </h3>
-        <h3>Building
-            <span class="label label-warning"><%= building_jobs.count %></span>
-        <h3>Failed
-            <span class="label label-danger"><%= failed_jobs.count %></span>
-        </h3>
-        <h3>Total
-            <span class="label label-info"><%= successful_jobs.count + building_jobs.count + failed_jobs.count %></span>
-        </h3>
+        <h3>Successful <span class="label label-success"><%= successful_jobs.count %></span></h3>
+        <h3>Building <span class="label label-warning"><%= building_jobs.count %></span></h3>
+        <h3>Failed <span class="label label-danger"><%= failed_jobs.count %></span></h3>
+        <h3>Total <span class="label label-info"><%= successful_jobs.count + building_jobs.count + failed_jobs.count %></span></h3>
     </div>
+
     <table class="table">
-        <% building_jobs.sort.each do |job| %>
-        <tr>
-            <td class="building-job"><%= job %></td>
+        <% building_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="building-job">
+            <td><a href="<%= job['url'] %>"><%= job['name'] %></a></td>
         </tr>
         <% end %>
-        <% failed_jobs.sort.each do |job| %>
-        <tr>
-            <td class="failed-job"><%= job %></td>
+
+        <% failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="failed-job">
+            <td><a href="<%= job['url'] %>"><%= job['name'] %></a></td>
         </tr>
         <% end %>
-        <% successful_jobs.sort.each do |job| %>
-        <tr>
-            <td class="successful-job"><%= job %></td>
+
+        <% successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="successful-job">
+            <td>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
         </tr>
         <% end %>
+
     </table>
 </div>
 <% end %>
 
 <script src="js/jquery-1.11.0.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-
 </body>
 </html>

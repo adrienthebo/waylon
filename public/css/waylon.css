@@ -22,18 +22,26 @@ body {
     margin: 0 1em;
     padding: 0;
 }
+.table thead > tr,
+.table tbody > tr,
+.table tfoot > tr {
+    border: 1px solid white;
+}
 .table thead > tr > th,
 .table tbody > tr > th,
 .table tfoot > tr > th,
 .table thead > tr > td,
 .table tbody > tr > td,
 .table tfoot > tr > td {
-    border: 1px solid white;
+    border: none;
 }
 .building-job, .failed-job, .successful-job {
     color: white;
     font-size: 1.5em;
     font-weight: bold;
+}
+.building-job a, .failed-job a, .successful-job a {
+    color: white;
 }
 .building-job {
     background-color: #f0ad4e;
