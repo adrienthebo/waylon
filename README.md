@@ -52,9 +52,10 @@ software:
   * [JQuery](http://jquery.com)
   * [jenkins_api_client](https://github.com/arangamani/jenkins_api_client)
 
-This application also includes the following images that were released under
+This application also includes the following content that was released under the
 [Creative Commons Attribution (CC BY)](http://creativecommons.org/licenses/)
-licenses:
+license:
+  * [GLYPHICONS](http://glyphicons.com/)
   * [Day 105: Oregon Coast Range](https://www.flickr.com/photos/lorenkerns/8651732785) by Loren Kerns
   * [Mt. Hood, Oregon](https://www.flickr.com/photos/tsaiproject/9943809254) by tsaiproject
   * [Multnomah Falls](https://www.flickr.com/photos/johnniewalker/12660211844) by John Tregoning

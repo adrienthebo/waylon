@@ -9,11 +9,11 @@ class Waylon < Sinatra::Application
     def weather(score)
       case score.to_i
       when 100
-        '<span class="weather weather-sunny"></span>'
+        '<img class="weather" src="img/sun.png" alt="Sun" title="No recent builds failed."></img>'
       when 80
-        '<span class="weather weather-cloudy"></span>'
+        '<img class="weather" src="img/cloud.png" alt="Umbrella" title="1 out of the last 5 builds failed."></img>'
       else
-        '<span class="weather weather-rainy"></span>'
+        '<img class="weather" src="img/umbrella.png" alt="Umbrella" title="2 or more of the last 5 builds failed."></img>'
       end
     end
   end

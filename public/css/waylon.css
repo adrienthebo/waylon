@@ -13,6 +13,16 @@ body {
     font-size: 1.5em;
     font-weight: bold;
 }
+.navbar-default .navbar-nav > li > a {
+    background: inherit;
+    color: white !important;
+    text-shadow: none;
+}
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > li > a:hover {
+    background-image: none !important;
+    background-color: #695592 !important;
+}
 .stats-rollup {
     padding: 10px 0 25px 0;
     text-align: center;
@@ -53,21 +63,5 @@ body {
     background-color: #5cb85c;
 }
 .weather {
-    position: relative;
-    top: 1px;
-    display: inline-block;
-    font-style: normal;
-    font-weight: normal;
-    line-height: 1;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-.weather-sunny:before {
-    content: "\2600";
-}
-.weather-cloudy:before {
-    content: "\2601";
-}
-.weather-rainy:before {
-    content: "\2602";
+    margin: 0 5px;
 }
