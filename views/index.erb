@@ -58,19 +58,31 @@ body {
     <table class="table">
         <% building_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="building-job">
-            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
         </tr>
         <% end %>
 
         <% failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="failed-job">
-            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
         </tr>
         <% end %>
 
         <% successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="successful-job">
-            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
         </tr>
         <% end %>
 
@@ -78,7 +90,11 @@ body {
 </div>
 <% end %>
 
+<!-- Include js bits last, to improve page load performance -->
 <script src="js/jquery-1.11.0.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script>
+    $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
+</script>
 </body>
 </html>

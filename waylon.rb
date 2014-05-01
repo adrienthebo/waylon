@@ -9,11 +9,23 @@ class Waylon < Sinatra::Application
     def weather(score)
       case score.to_i
       when 100
-        '<img class="weather" src="img/sun.png" alt="Sun" title="No recent builds failed."></img>'
+        {
+          'src' => 'img/sun.png',
+          'alt' => '[sun]',
+          'title' => 'No recent builds failed'
+        }
       when 80
-        '<img class="weather" src="img/cloud.png" alt="Umbrella" title="1 out of the last 5 builds failed."></img>'
+        { 
+          'src' => 'img/cloud.png',
+          'alt' => '[cloud]',
+          'title' => '1 of the last 5 builds failed'
+        }
       else
-        '<img class="weather" src="img/umbrella.png" alt="Umbrella" title="2 or more of the last 5 builds failed."></img>'
+        {
+          'src' => 'img/umbrella.png',
+          'alt' => '[umbrella]',
+          'title' => '2 or more of the last 5 builds failed'
+        }
       end
     end
   end
