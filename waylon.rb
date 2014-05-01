@@ -4,6 +4,20 @@ require 'jenkins_api_client'
 require 'yaml'
 
 class Waylon < Sinatra::Application
+  helpers do
+    # weather() returns a HTML unicode character based on build stability
+    def weather(score)
+      case score.to_i
+      when 100
+        '<span class="weather weather-sunny"></span>'
+      when 80
+        '<span class="weather weather-cloudy"></span>'
+      else
+        '<span class="weather weather-rainy"></span>'
+      end
+    end
+  end
+
   get '/' do
     config = YAML.load(File.open('./waylon_config.yml'))
 
@@ -20,31 +34,25 @@ class Waylon < Sinatra::Application
 
     config['jobs'].each do |hash|
       hash.keys.each do |server|
-        filter += hash[server] # job the job filter
-
+        filter += hash[server] # build the job filter
         client = JenkinsApi::Client.new(:server_url => server)
 
-        # Attempt to establish a connection to `server`
         begin
-          client.get_root
+          client.get_root  # Attempt a connection to `server`
         rescue SocketError
           errors << "Unable to connect to server: #{server}"
           next
         end
 
-        # Get all the jobs and job details from the server. If the job
-        # is in the job filter, check its status, and append it to the
-        # relevant array.
-        client.job.list_all_with_details.each do |job|
-          if(filter.include?(job['name'])) then
-            case client.job.color_to_status(job['color'])
-            when 'running'
-              building_jobs << job
-            when 'failure'
-              failed_jobs << job
-            when 'success'
-              successful_jobs << job
-            end
+        filter.each do |job|
+          job_details = client.job.list_details(job)
+          case client.job.color_to_status(job_details['color'])
+          when 'running'
+            building_jobs << job_details
+          when 'failure'
+            failed_jobs << job_details
+          when 'success'
+            successful_jobs << job_details
           end
         end
       end

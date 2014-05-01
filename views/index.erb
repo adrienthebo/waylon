@@ -58,21 +58,19 @@ body {
     <table class="table">
         <% building_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="building-job">
-            <td><a href="<%= job['url'] %>"><%= job['name'] %></a></td>
+            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
         </tr>
         <% end %>
 
         <% failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="failed-job">
-            <td><a href="<%= job['url'] %>"><%= job['name'] %></a></td>
+            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
         </tr>
         <% end %>
 
         <% successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="successful-job">
-            <td>
-                <a href="<%= job['url'] %>"><%= job['name'] %></a>
-            </td>
+            <td><%= weather(job['healthReport'][0]['score']) %> <a href="<%= job['url'] %>"><%= job['name'] %></a></td>
         </tr>
         <% end %>
 

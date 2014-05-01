@@ -52,3 +52,22 @@ body {
 .successful-job {
     background-color: #5cb85c;
 }
+.weather {
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.weather-sunny:before {
+    content: "\2600";
+}
+.weather-cloudy:before {
+    content: "\2601";
+}
+.weather-rainy:before {
+    content: "\2602";
+}
