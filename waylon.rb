@@ -54,6 +54,9 @@ class Waylon < Sinatra::Application
     erb :index, :locals => { :views => views }
   end
 
+  # Individual views (view/foo)
+  # When navigating to 'view/foo', queries waylon_config.yml for
+  # that view's config (servers to connect to, and jobs to display).
   get '/view/:name' do
     this_view = Rack::Utils.unescape(params[:name])
     config = YAML.load_file('./waylon_config.yml')
@@ -103,7 +106,7 @@ class Waylon < Sinatra::Application
     if(failed_jobs.empty? and errors.empty?) then
       nirvana = true
       wday = Time.new.wday
-      nirvana_img = "img/img0#{wday}.png"
+      nirvana_img = "../img/img0#{wday}.png"
     end
 
     erb :view,
