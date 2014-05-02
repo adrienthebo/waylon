@@ -13,7 +13,7 @@ class Waylon < Sinatra::Application
 
     # get_views() does just that, gets a list of views.
     def get_views()
-      config = YAML.load_file('./waylon_config.yml')
+      config = YAML.load_file(File.join(File.dirname(__FILE__), 'waylon_config.yml'))
       views = []
       config['views'].each do |view|
         views += view.keys
@@ -59,7 +59,7 @@ class Waylon < Sinatra::Application
   # that view's config (servers to connect to, and jobs to display).
   get '/view/:name' do
     this_view = Rack::Utils.unescape(params[:name])
-    config = YAML.load_file('./waylon_config.yml')
+    config = YAML.load_file(File.join(File.dirname(__FILE__), 'waylon_config.yml'))
 
     # Refresh the page every `refresh_interval` seconds.
     refresh_interval = config['config'][0]['refresh_interval'].to_s

@@ -1,3 +1,2 @@
-require './waylon.rb'
-$stdout.sync = true
+require File.join(File.dirname(__FILE__), 'waylon.rb')
 run Waylon.new
