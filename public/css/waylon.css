@@ -23,6 +23,18 @@ body {
     background-image: none !important;
     background-color: #695592 !important;
 }
+.landing {
+    font-size: 2em;
+    padding: 50px 0 25px 0;
+    text-align: center;
+}
+.landing ul, .landing ul li {
+    margin: 0;
+    padding: 0;
+}
+.landing ul {
+    list-style-type: none;
+}
 .stats-rollup {
     padding: 10px 0 25px 0;
     text-align: center;

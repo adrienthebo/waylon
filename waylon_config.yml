@@ -1,11 +1,20 @@
 ---
 config:
     - refresh_interval: 30  # page refresh interval (in seconds)
-
-jobs:
-    - http://jenkins1.example.com:
-        - Product A Job 1
-        - Product A Job 2
-    - http://jenkins2.example.com:
-        - Product B Job 1
-        - Product B Job 2
+views:
+    - 'Awesome View 1':
+        - http://jenkins1.example.com:
+            - jobs:
+                - 'Product A Job 1'
+                - 'Product A Job 2'
+        - http://jenkins2.example.com:
+            - jobs:
+                - 'Product B Job 1'
+                - 'Product B Job 2'
+    - 'Awesome View 2':
+        - http://jenkins1.example.com:
+            - jobs:
+                - 'Product A Job 1'
+        - http://jenkins2.example.com:
+            - jobs:
+                - 'Product B Job 1'
