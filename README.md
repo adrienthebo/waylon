@@ -19,14 +19,21 @@ git clone https://github.com/rji/waylon
 ```
 
 Modify `waylon_config.yml` to point to your Jenkins install, and enter any
-job names that you wish to display. For Puppet Labs, this might be:
+job names that you wish to display. For the most part, it's self-explanatory,
+but here's an example anyway for a few of [Puppet Labs](http://www.puppetlabs.com)'
+FOSS projects:
 
 ```yaml
-jobs:
-    - https://jenkins.puppetlabs.com:
-        - Facter-Specs-master
-        - Hiera-Specs-master
-        - Puppet-Specs-master
+---
+config:
+    - refresh_interval: 30  # page refresh interval (in seconds)
+views:
+    - 'Puppet Labs - FOSS':
+        - https://jenkins.puppetlabs.com:
+            - jobs:
+                - 'Puppet-Specs-master'
+                - 'Facter-Specs-master'
+                - 'Hiera-Specs-master'
 ```
 
 ## Deploy
