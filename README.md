@@ -5,10 +5,11 @@ Waylon is a dashboard to display the status of your Jenkins builds.
   * Source code: https://github.com/rji/waylon
 
 ## Overview
-  * Displays only the desired jobs from multiple Jenkins instances
-  * Displays failures above successes, and both in alphabetical order
-  * "Nirvana mode" displays a calming image of Oregon if all your jobs were
-  successful
+  * Displays only the desired jobs from one or more Jenkins instances
+  * Displays build stability for each job (sunny, cloudy, raining)
+  * Groups jobs by building, failed, and successful, and displays job counts for each
+  * Multiple views allows for multiple teams to utilize a single Waylon install
+  * Nirvana mode displays a calming image of Oregon if all your jobs are green
 
 ## Setup
 Clone the repo:
@@ -63,3 +64,4 @@ license:
   * [Central Oregon Landscape](https://www.flickr.com/photos/ex_magician/3196286183) by Michael McCullough
   * [Oregon Autumn Part 4](https://www.flickr.com/photos/31246066@N04/4030400633) by Ian Sane
   * [Astoria, Oregon](https://www.flickr.com/photos/goingslo/11522920406) by Linda Tanner
+
