@@ -21,7 +21,7 @@ class Waylon < Sinatra::Application
       return views
     end
 
-    # weather() returns a HTML unicode character based on build stability
+    # weather() returns an img src, alt, and title, based on build stability
     def weather(score)
       case score.to_i
       when 100
@@ -66,7 +66,6 @@ class Waylon < Sinatra::Application
 
     # For each Jenkins instance in "jobs", connect to the server,
     # and get the status of the jobs specified in the config.
-    filter          = []
     errors          = []
     failed_jobs     = []
     building_jobs   = []
@@ -75,7 +74,6 @@ class Waylon < Sinatra::Application
     config['views'].select { |h| h[this_view] }[0].each do |_, servers|
       servers.each do |hash|
         hash.keys.each do |server|
-          filter += hash[server][0]['jobs'] # build the job filter
           client = JenkinsApi::Client.new(:server_url => server)
 
           begin
@@ -85,7 +83,7 @@ class Waylon < Sinatra::Application
             next
           end
 
-          filter.each do |job|
+          hash[server][0]['jobs'].each do |job|
             job_details = client.job.list_details(job)
             case client.job.color_to_status(job_details['color'])
             when 'running'
