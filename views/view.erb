@@ -1,70 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="<%= refresh_interval %>">
-<title>Waylon</title>
-<link href="../css/bootstrap.min.css" rel="stylesheet">
-<link href="../css/bootstrap-theme.min.css" rel="stylesheet">
-<link href="../css/waylon.css" rel="stylesheet">
-
-<% # If all jobs are green, override the stylesheet with the CSS below %>
-<% if(nirvana) %>
-<style type="text/css">
-body {
-    background-image: url(<%= nirvana_img %>);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-}
-.navbar-fixed-top {
-    background: #333;
-    opacity: 0.5;
-}
-.navbar-default .navbar-nav > li > a {
-    background: inherit;
-    color: white !important;
-    text-shadow: none;
-}
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > li > a:hover {
-    background-image: none !important;
-    background-color: #111 !important;
-}
-</style>
-<% end %>
-
-</head>
-<body>
-
-<div class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <span class="navbar-brand">Waylon</span>
-        </div>
-        <div class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-            <% views.each do |view| %>
-                <% if(view == this_view) %>
-                <li class="active">
-                <% else %>
-                <li>
-                <% end %>
-                <a href="<%= escape(view) %>"><%= view %></a>
-                </li>
-            <% end %>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<% if(!nirvana) %>
+<% if(!@nirvana) %>
 <div class="container waylon">
     <br />
 
-    <% if(!errors.empty?) %>
-        <% errors.each do |error| %>
+    <% if(!@errors.empty?) %>
+        <% @errors.each do |error| %>
         <div class="alert alert-danger">
             <strong>Oh snap!</strong> <%= error %>
         </div>
@@ -72,14 +11,14 @@ body {
     <% end %>
 
     <div class="container stats-rollup">
-        <h3>Successful <span class="label label-success"><%= successful_jobs.count %></span></h3>
-        <h3>Building <span class="label label-warning"><%= building_jobs.count %></span></h3>
-        <h3>Failed <span class="label label-danger"><%= failed_jobs.count %></span></h3>
-        <h3>Total <span class="label label-info"><%= successful_jobs.count + building_jobs.count + failed_jobs.count %></span></h3>
+        <h3>Successful <span class="label label-success"><%= @successful_jobs.count %></span></h3>
+        <h3>Building <span class="label label-warning"><%= @building_jobs.count %></span></h3>
+        <h3>Failed <span class="label label-danger"><%= @failed_jobs.count %></span></h3>
+        <h3>Total <span class="label label-info"><%= @successful_jobs.count + @building_jobs.count + @failed_jobs.count %></span></h3>
     </div>
 
     <table class="table">
-        <% building_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <% @building_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="building-job">
             <% weather = weather(job['healthReport'][0]['score']) %>
             <td>
@@ -89,7 +28,7 @@ body {
         </tr>
         <% end %>
 
-        <% failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <% @failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="failed-job">
             <% weather = weather(job['healthReport'][0]['score']) %>
             <td>
@@ -99,7 +38,7 @@ body {
         </tr>
         <% end %>
 
-        <% successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <% @successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
         <tr class="successful-job">
             <% weather = weather(job['healthReport'][0]['score']) %>
             <td>
@@ -112,12 +51,8 @@ body {
     </table>
 </div>
 <% end %>
-
-<!-- Include js bits last, to improve page load performance -->
-<script src="../js/jquery-1.11.0.min.js"></script>
-<script src="../js/bootstrap.min.js"></script>
+<script src="/js/jquery-1.11.0.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
 <script>
     $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
 </script>
-</body>
-</html>
