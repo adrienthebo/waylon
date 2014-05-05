@@ -7,33 +7,6 @@
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/bootstrap-theme.min.css" rel="stylesheet">
 <link href="/css/waylon.css" rel="stylesheet">
-
-<% # If all jobs are green, override the stylesheet with the CSS below %>
-<% if(@nirvana) %>
-<style type="text/css">
-body {
-    background-image: url(<%= nirvana_img %>);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center;
-}
-.navbar-fixed-top {
-    background: #333;
-    opacity: 0.5;
-}
-.navbar-default .navbar-nav > li > a {
-    background: inherit;
-    color: white !important;
-    text-shadow: none;
-}
-.navbar-default .navbar-nav > .active > a,
-.navbar-default .navbar-nav > li > a:hover {
-    background-image: none !important;
-    background-color: #111 !important;
-}
-</style>
-<% end %>
-
 </head>
 <body>
 

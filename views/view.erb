@@ -1,58 +1,46 @@
-<% if(!@nirvana) %>
-<div class="container waylon">
-    <br />
-
-    <% if(!@errors.empty?) %>
-        <% @errors.each do |error| %>
-        <div class="alert alert-danger">
-            <strong>Oh snap!</strong> <%= error %>
-        </div>
-        <% end %>
-    <% end %>
-
-    <div class="container stats-rollup">
-        <h3>Successful <span class="label label-success"><%= @successful_jobs.count %></span></h3>
-        <h3>Building <span class="label label-warning"><%= @building_jobs.count %></span></h3>
-        <h3>Failed <span class="label label-danger"><%= @failed_jobs.count %></span></h3>
-        <h3>Total <span class="label label-info"><%= @successful_jobs.count + @building_jobs.count + @failed_jobs.count %></span></h3>
+<div id="radiator" class="container waylon">
+    <!-- If you're looking at the source of this page and wondering why
+         this div is empty, here's why: #radiator is a place-holder div
+         for jQuery, which dynamically writes HTML here from "./data".
+         The #loading div below is shown and hidden based on a conditional
+         at the bottom of this page.
+    -->
+    <div id="loading">
+        <span class="glyphicon glyphicon-refresh loadingIndicator"></span>
+        <p>Getting the latest data, just for you.</p>
     </div>
-
-    <table class="table">
-        <% @building_jobs.sort_by { |h| h['name'] }.each do |job| %>
-        <tr class="building-job">
-            <% weather = weather(job['healthReport'][0]['score']) %>
-            <td>
-                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
-                <a href="<%= job['url'] %>"><%= job['name'] %></a>
-            </td>
-        </tr>
-        <% end %>
-
-        <% @failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
-        <tr class="failed-job">
-            <% weather = weather(job['healthReport'][0]['score']) %>
-            <td>
-                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
-                <a href="<%= job['url'] %>"><%= job['name'] %></a>
-            </td>
-        </tr>
-        <% end %>
-
-        <% @successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
-        <tr class="successful-job">
-            <% weather = weather(job['healthReport'][0]['score']) %>
-            <td>
-                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
-                <a href="<%= job['url'] %>"><%= job['name'] %></a>
-            </td>
-        </tr>
-        <% end %>
-
-    </table>
 </div>
-<% end %>
+
 <script src="/js/jquery-1.11.0.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script>
     $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
+
+    function refreshRadiator() {
+        $(function() {
+            $('#radiator').load('/view/<%= escape(@this_view) %>/data');
+        });
+    }
+    $(document).ajaxSend(function() {
+        $('#loading').show();
+    });
+    $(document).ajaxComplete(function () {
+        $('#loading').hide();
+
+        // Nirvana mode
+        if(($('.building-job').length == 0) && ($('.failed-job').length == 0) && $('.alert-danger').length == 0) {
+            $('body').addClass('nirvana');
+            $('body').css('background-image', 'url(<%= @nirvana_img %>)');
+            $('#radiator').hide();
+        }
+        else {
+            $('body').removeClass('nirvana');
+            $('body').css('background-image', 'none');
+            $('#radiator').show();
+        }
+    });
+
+    $(document).ready(refreshRadiator)
+    setInterval(refreshRadiator, <%= @refresh_interval * 1000 %>);
+
 </script>

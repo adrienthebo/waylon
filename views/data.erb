@@ -1,0 +1,48 @@
+    <br />
+    <% if(!@errors.empty?) %>
+        <% @errors.each do |error| %>
+        <div class="alert alert-danger">
+            <strong>Oh snap!</strong> <%= error %>
+        </div>
+        <% end %>
+    <% end %>
+
+    <div class="container stats-rollup">
+        <h3>Successful <span class="label label-success"><%= @successful_jobs.count %></span></h3>
+        <h3>Building <span class="label label-warning"><%= @building_jobs.count %></span></h3>
+        <h3>Failed <span class="label label-danger"><%= @failed_jobs.count %></span></h3>
+        <h3>Total <span class="label label-info"><%= @successful_jobs.count + @building_jobs.count + @failed_jobs.count %></span></h3>
+    </div>
+
+    <table class="table">
+        <% @building_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="building-job">
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
+        </tr>
+        <% end %>
+
+        <% @failed_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="failed-job">
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
+        </tr>
+        <% end %>
+
+        <% @successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
+        <tr class="successful-job">
+            <% weather = weather(job['healthReport'][0]['score']) %>
+            <td>
+                <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
+                <a href="<%= job['url'] %>"><%= job['name'] %></a>
+            </td>
+        </tr>
+        <% end %>
+
+    </table>

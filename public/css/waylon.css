@@ -77,3 +77,43 @@ body {
 .weather {
     margin: 0 5px;
 }
+#radiator #loading {
+    color: #999;
+    margin-top: 150px;
+    text-align: center;
+}
+.loadingIndicator {
+    -webkit-animation: loadingIndicator 2s linear infinite;
+    -moz-animation:    loadingIndicator 2s linear infinite;
+    font-size: 4em;
+    margin: 25px;
+}
+@-webkit-keyframes loadingIndicator {
+    from { -webkit-transform: rotate(0deg);   }
+    to   { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes loadingIndicator {
+    from { -moz-transform: rotate(0deg);   }
+    to   { -moz-transform: rotate(360deg); }
+}
+
+/* Nirvana mode styles */
+body.nirvana {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+}
+body.nirvana .navbar-fixed-top {
+    background: #333;
+    opacity: 0.5;
+}
+body.nirvana .navbar-default .navbar-nav > li > a {
+    background: inherit;
+    color: white !important;
+    text-shadow: none;
+}
+body.nirvana .navbar-default .navbar-nav > .active > a,
+body.nirvana .navbar-default .navbar-nav > li > a:hover {
+    background-image: none !important;
+    background-color: #111 !important;
+}

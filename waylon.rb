@@ -12,7 +12,7 @@ class Waylon < Sinatra::Application
 
     # get_views() does just that, gets a list of views.
     def get_views()
-      config = YAML.load_file(File.join(File.dirname(__FILE__), 'waylon_config.yml'))
+      config = load_config()
       views = []
       config['views'].each do |view|
         views += view.keys
@@ -20,24 +20,31 @@ class Waylon < Sinatra::Application
       return views
     end
 
+    # load_config() opens waylon_config.yml, parses it, and returns
+    def load_config()
+      root = File.dirname(__FILE__)
+      config = YAML.load_file(File.join(root, 'waylon_config.yml'))
+      return config
+    end
+
     # weather() returns an img src, alt, and title, based on build stability
     def weather(score)
       case score.to_i
       when 100
         {
-          'src' => '../img/sun.png',
+          'src' => '/img/sun.png',
           'alt' => '[sun]',
           'title' => 'No recent builds failed'
         }
       when 80
         {
-          'src' => '../img/cloud.png',
+          'src' => '/img/cloud.png',
           'alt' => '[cloud]',
           'title' => '1 of the last 5 builds failed'
         }
       else
         {
-          'src' => '../img/umbrella.png',
+          'src' => '/img/umbrella.png',
           'alt' => '[umbrella]',
           'title' => '2 or more of the last 5 builds failed'
         }
@@ -45,29 +52,50 @@ class Waylon < Sinatra::Application
     end
   end
 
-  # Landing page (index.html)
+  # Landing page (`/`)
   # Print a list of views available on this Waylon instance.
   get '/' do
     @this_view = 'index'
-    @nirvana   = false
 
     erb :base do
       erb :index
     end
   end
 
-  # Individual views (view/foo)
-  # When navigating to 'view/foo', queries waylon_config.yml for
-  # that view's config (servers to connect to, and jobs to display).
+  # Individual views (`/view/foo`)
+  # These are the pages the user actually interacts with. Code here and
+  # in the ERB templates for `view/foo` should be _just enough_ to refresh
+  # the contents of <div class="waylon container"> with the latest data.
   get '/view/:name' do
     @this_view = Rack::Utils.unescape(params[:name])
-    config = YAML.load_file(File.join(File.dirname(__FILE__), 'waylon_config.yml'))
+    config = load_config()
 
     # Refresh the page every `refresh_interval` seconds.
-    @refresh_interval = config['config'][0]['refresh_interval'].to_s
+    @refresh_interval = config['config'][0]['refresh_interval'].to_i
 
-    # For each Jenkins instance in "jobs", connect to the server,
-    # and get the status of the jobs specified in the config.
+    # Ensure @nirvana_img is always available to the view. If the count of
+    # .building-build and .failed-build classes on the page is zero, and the
+    # count of .alert-danger is 0, jQuery will modify the class of <body> and
+    # the value of `background-image` to display the image.
+    wday = Time.new.wday
+    @nirvana_img = "/img/img0#{wday}.png"
+
+    erb :base do
+      erb :view
+    end
+  end
+
+  # Individual views' data (`/view/foo/data`)
+  # When navigating to 'view/foo', queries waylon_config.yml for that view's
+  # config (servers to connect to, and jobs to display). Returns HTML for the
+  # jQuery in '/view/:name' to work with.
+  get '/view/:name/data' do
+    @this_view = Rack::Utils.unescape(params[:name])
+    config = load_config()
+
+    # For each Jenkins instance in a view, connect to the server, and get the
+    # status of the jobs specified in the config. Append job details to each
+    # applicable array: successful, failed, and building.
     @errors          = []
     @failed_jobs     = []
     @building_jobs   = []
@@ -100,18 +128,7 @@ class Waylon < Sinatra::Application
       end
     end
 
-    # If all jobs are green, display the image of the day. These images
-    # are located in `public/img/` and follow the convention `imgNN.png`,
-    # where NN is the day (number) of the week, starting with 0 (Sunday).
-    if(@failed_jobs.empty? and @errors.empty?) then
-      @nirvana = true
-      wday = Time.new.wday
-      @nirvana_img = "../img/img0#{wday}.png"
-    end
-
-    erb :base do
-      erb :view
-    end
+    erb :data
   end
 end
 
