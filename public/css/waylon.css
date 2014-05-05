@@ -1,9 +1,12 @@
+/* Global */
 body {
     padding-top: 50px;
 }
 .container {
     width: 90% !important;
 }
+
+/* Global navigation */
 .navbar-default {
     background: #7c65ad;
     border-bottom: none;
@@ -23,8 +26,10 @@ body {
     background-image: none !important;
     background-color: #695592 !important;
 }
+
+/* Landing page */
 .landing {
-    font-size: 2em;
+    font-size: 1.5em;
     padding: 50px 0 25px 0;
     text-align: center;
 }
@@ -34,6 +39,27 @@ body {
 }
 .landing ul {
     list-style-type: none;
+}
+
+/* Radiator view */
+#radiator #loading {
+    color: #999;
+    margin-top: 150px;
+    text-align: center;
+}
+.loadingIndicator {
+    -webkit-animation: loadingIndicator 2s linear infinite;
+    -moz-animation:    loadingIndicator 2s linear infinite;
+    font-size: 4em;
+    margin: 25px;
+}
+@-webkit-keyframes loadingIndicator {
+    from { -webkit-transform: rotate(0deg);   }
+    to   { -webkit-transform: rotate(360deg); }
+}
+@-moz-keyframes loadingIndicator {
+    from { -moz-transform: rotate(0deg);   }
+    to   { -moz-transform: rotate(360deg); }
 }
 .stats-rollup {
     padding: 10px 0 25px 0;
@@ -65,40 +91,14 @@ body {
 .building-job a, .failed-job a, .successful-job a {
     color: white;
 }
-.building-job {
-    background-color: #f0ad4e;
-}
-.failed-job {
-    background-color: #d9534f;
-}
-.successful-job {
-    background-color: #5cb85c;
-}
-.weather {
-    margin: 0 5px;
-}
-#radiator #loading {
-    color: #999;
-    margin-top: 150px;
-    text-align: center;
-}
-.loadingIndicator {
-    -webkit-animation: loadingIndicator 2s linear infinite;
-    -moz-animation:    loadingIndicator 2s linear infinite;
-    font-size: 4em;
-    margin: 25px;
-}
-@-webkit-keyframes loadingIndicator {
-    from { -webkit-transform: rotate(0deg);   }
-    to   { -webkit-transform: rotate(360deg); }
-}
-@-moz-keyframes loadingIndicator {
-    from { -moz-transform: rotate(0deg);   }
-    to   { -moz-transform: rotate(360deg); }
-}
+.building-job   { background-color: #f0ad4e; }
+.failed-job     { background-color: #d9534f; }
+.successful-job { background-color: #5cb85c; }
+.weather        { margin: 0 5px;             }
 
-/* Nirvana mode styles */
+/* Nirvana mode */
 body.nirvana {
+    /* background-image set by jQuery */
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
