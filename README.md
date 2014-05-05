@@ -57,7 +57,7 @@ This application makes use of and/or re-distributes the following open source
 software:
   * [Sinatra](http://www.sinatrarb.com)
   * [Bootstrap](http://getbootstrap.com)
-  * [JQuery](http://jquery.com)
+  * [jQuery](http://jquery.com)
   * [jenkins_api_client](https://github.com/arangamani/jenkins_api_client)
 
 This application also includes the following content that was released under the
