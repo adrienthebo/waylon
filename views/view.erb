@@ -14,8 +14,6 @@
 <script src="/js/jquery-1.11.0.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script>
-    $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
-
     function refreshRadiator() {
         $(function() {
             $('#radiator').load('/view/<%= escape(@this_view) %>/data');
@@ -26,6 +24,7 @@
     });
     $(document).ajaxComplete(function () {
         $('#loading').hide();
+        $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
 
         // Nirvana mode
         if(($('.building-job').length == 0) && ($('.failed-job').length == 0) && $('.alert-danger').length == 0) {
