@@ -33,6 +33,21 @@ var waylon = {
         return result;
     },
 
+    // Nirvana mode enablement. Checks for the number of elements on the
+    // page belonging to any of the classes listed in elems[]. If any are
+    // found, returns false.
+    nirvanaCheck: function() {
+        elems = ['.building-job', '.failed-job', '.alert-danger'];
+        var count = 0;
+
+        $.each(elems, function(i, elem) {
+            count += $(elem).length;
+        });
+
+        if(count == 0) { return true;  }
+        else           { return false; }
+    },
+
     // Enter nirvana mode
     nirvanaBegin: function() {
         $('body').addClass('nirvana');
@@ -61,14 +76,9 @@ var waylon = {
             $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
 
             // Nirvana mode
-            if(($('.building-job').length == 0) &&
-                ($('.failed-job').length == 0) &&
-                ($('.alert-danger').length == 0)) {
-                waylon.nirvanaBegin();
-            }
-            else {
-                waylon.nirvanaEnd();
-            }
+            isNirvana = waylon.nirvanaCheck();
+            if(isNirvana) { waylon.nirvanaBegin(); }
+            else          { waylon.nirvanaEnd();   }
         });
 
         // Do it.
