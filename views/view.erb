@@ -13,33 +13,11 @@
 
 <script src="/js/jquery-1.11.0.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="/js/waylon.js"></script>
 <script>
-    function refreshRadiator() {
-        $(function() {
-            $('#radiator').load('/view/<%= escape(@this_view) %>/data');
-        });
-    }
-    $(document).ajaxSend(function() {
-        $('#loading').show();
-    });
-    $(document).ajaxComplete(function () {
-        $('#loading').hide();
-        $('[data-toggle="tooltip"]').tooltip({'placement': 'bottom'});
-
-        // Nirvana mode
-        if(($('.building-job').length == 0) && ($('.failed-job').length == 0) && $('.alert-danger').length == 0) {
-            $('body').addClass('nirvana');
-            $('body').css('background-image', 'url(<%= @nirvana_img %>)');
-            $('#radiator').hide();
-        }
-        else {
-            $('body').removeClass('nirvana');
-            $('body').css('background-image', 'none');
-            $('#radiator').show();
-        }
-    });
-
-    $(document).ready(refreshRadiator)
-    setInterval(refreshRadiator, <%= @refresh_interval * 1000 %>);
-
+var settings = {
+    refresh_interval: <%= @refresh_interval %>,
+    datasource: '/view/<%= escape(@this_view) %>/data',
+};
+waylon.init(settings);
 </script>

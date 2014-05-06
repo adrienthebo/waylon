@@ -73,13 +73,6 @@ class Waylon < Sinatra::Application
     # Refresh the page every `refresh_interval` seconds.
     @refresh_interval = config['config'][0]['refresh_interval'].to_i
 
-    # Ensure @nirvana_img is always available to the view. If the count of
-    # .building-build and .failed-build classes on the page is zero, and the
-    # count of .alert-danger is 0, jQuery will modify the class of <body> and
-    # the value of `background-image` to display the image.
-    wday = Time.new.wday
-    @nirvana_img = "/img/img0#{wday}.png"
-
     erb :base do
       erb :view
     end
