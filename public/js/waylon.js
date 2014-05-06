@@ -33,6 +33,20 @@ var waylon = {
         return result;
     },
 
+    // Enter nirvana mode
+    nirvanaBegin: function() {
+        $('body').addClass('nirvana');
+        $('body').css('background-image', 'url('+ waylon.imageOfTheDay() + ')');
+        $('#radiator').hide();
+    },
+
+    // Exit nirvana mode
+    nirvanaEnd: function() {
+        $('body').removeClass('nirvana');
+        $('body').css('background-image', 'none');
+        $('#radiator').show();
+    },
+
     // Poll '/view/:name/data' to fetch the latest data from Jenkins,
     // starting and ending Nirvana mode as needed.
     refreshRadiator: function() {
@@ -59,17 +73,5 @@ var waylon = {
 
         // Do it.
         $('#radiator').load(waylon.config.datasource);
-    },
-
-    nirvanaBegin: function() {
-        $('body').addClass('nirvana');
-        $('body').css('background-image', 'url('+ waylon.imageOfTheDay() + ')');
-        $('#radiator').hide();
-    },
-
-    nirvanaEnd: function() {
-        $('body').removeClass('nirvana');
-        $('body').css('background-image', 'none');
-        $('#radiator').show();
     },
 };
