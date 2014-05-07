@@ -105,11 +105,8 @@ class Waylon < Sinatra::Application
           rescue SocketError
             @errors << "Unable to connect to server: #{server}"
             next
-          rescue Errno::ETIMEDOUT, Net::ReadTimeout
+          rescue Errno::ETIMEDOUT
             @errors << "Timed out while connecting to server: #{server}"
-            next
-          else
-            @errors << "An error occurred while connecting to server: #{server}"
             next
           end
 
