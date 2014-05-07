@@ -32,6 +32,27 @@
             <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
             <a href="<%= job['url'] %>"><%= job['name'] %></a>
 
+            <%
+            # In waylon.rb, we populate an array of hashes for failed
+            # jobs that includes the last build number and that build's
+            # description. Using that logic, we can decide whether to
+            # show a live button or a disabled one. The live button
+            # will allow a user to 'investigate' the failed build by
+            # updating the failed build's description. If the
+            # description has already been updated, it will show a
+            # disabled button and not allow the user to take further
+            # action.
+            %>
+            <div class="investigate">
+            <% if(@failed_builds.select { |h| h['job_name'] == job['name'] }[0]['is_under_investigation']) %>
+                <button type="button" class="btn btn-default disabled">Under investigation</button>
+            <% else %>
+                <button type="button" class="btn btn-default">Investigate</button>
+            <% end %>
+            </div>
+        </td>
+    </tr>
+    <% end %>
 
     <% @successful_jobs.sort_by { |h| h['name'] }.each do |job| %>
     <tr class="successful-job">

@@ -95,6 +95,8 @@ body {
 .failed-job     { background-color: #d9534f; }
 .successful-job { background-color: #5cb85c; }
 .weather        { margin: 0 5px;             }
+.investigate   { float: right; }
+.investigate a { color: black; }
 
 /* Nirvana mode */
 body.nirvana {

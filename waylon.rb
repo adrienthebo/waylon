@@ -91,6 +91,7 @@ class Waylon < Sinatra::Application
     # applicable array: successful, failed, and building.
     @errors          = []
     @failed_jobs     = []
+    @failed_builds   = []
     @building_jobs   = []
     @successful_jobs = []
 
@@ -116,6 +117,21 @@ class Waylon < Sinatra::Application
               @building_jobs << job_details
             when 'failure'
               @failed_jobs << job_details
+
+              # We already know the job is in 'failed' state. Using the build
+              # description (or lack thereof), build an array of hashes to
+              # determine if the failed job is already under investigation.
+              last_build_num = job_details['lastBuild']['number']
+              if(client.job.get_build_details(job, last_build_num)['description'] =~ /under investigation/i)
+                is_under_investigation = true
+              else
+                is_under_investigation = false
+              end
+
+              @failed_builds << {
+                'job_name'               => job_details['name'],
+                'is_under_investigation' => is_under_investigation,
+              }
             when 'success'
               @successful_jobs << job_details
             end
