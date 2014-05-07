@@ -104,6 +104,9 @@ class Waylon < Sinatra::Application
           rescue SocketError
             @errors << "Unable to connect to server: #{server}"
             next
+          rescue Errno::ETIMEDOUT
+            @errors << "Timed out while connecting to server: #{server}"
+            next
           end
 
           hash[server][0]['jobs'].each do |job|
