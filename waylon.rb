@@ -10,7 +10,8 @@ class Waylon < Sinatra::Application
       CGI::escape(text)
     end
 
-    # get_views() does just that, gets a list of views.
+    # get_views() does just that, gets a list of views from
+    # the config file and returns an array of strings.
     def get_views()
       config = load_config()
       views = []
@@ -79,9 +80,9 @@ class Waylon < Sinatra::Application
   end
 
   # Individual views' data (`/view/foo/data`)
-  # When navigating to 'view/foo', queries waylon_config.yml for that view's
-  # config (servers to connect to, and jobs to display). Returns HTML for the
-  # jQuery in '/view/:name' to work with.
+  # When navigating to 'view/foo/data', queries waylon_config.yml for that
+  # view's config (servers to connect to, and jobs to display). Returns an
+  # HTML table for the jQuery in '/view/:name' to load and display.
   get '/view/:name/data' do
     @this_view = CGI.unescape(params[:name])
     config = load_config()
@@ -98,7 +99,29 @@ class Waylon < Sinatra::Application
     config['views'].select { |h| h[@this_view] }[0].each do |_, servers|
       servers.each do |hash|
         hash.keys.each do |server|
-          client = JenkinsApi::Client.new(:server_url => server)
+
+          # This is wrapped inside a block to ensure that we display an error
+          # if the user has an improperly-formatted YAML file. That is, they
+          # have omitted 'username', 'password' or both. If that's the case,
+          # a NoMethodError will be raised.
+          begin
+            username = hash[server].select { |h| h['username'] }[0]['username']
+            password = hash[server].select { |h| h['password'] }[0]['password']
+
+            if(!username.empty? and !password.empty?)
+              client = JenkinsApi::Client.new(
+                :server_url => server,
+                :username   => username,
+                :password   => password,
+              )
+            else
+              @errors << "No credentials provided for server: #{server}"
+              next
+            end
+          rescue NoMethodError
+            @errors << "No credentials provided for server: #{server}"
+            next
+          end
 
           begin
             client.get_root  # Attempt a connection to `server`
@@ -110,8 +133,17 @@ class Waylon < Sinatra::Application
             next
           end
 
-          hash[server][0]['jobs'].each do |job|
-            job_details = client.job.list_details(job)
+          hash[server].select { |h| h['jobs'] }[0]['jobs'].each do |job|
+
+            # jenkins_api_client won't throw an Unauthorized exception until
+            # we really try doing something, like calling list_details()
+            begin
+              job_details = client.job.list_details(job)
+            rescue JenkinsApi::Exceptions::Unauthorized
+              @errors << "Incorrect username or password for server: #{server}"
+              break
+            end
+
             case client.job.color_to_status(job_details['color'])
             when 'running'
               @building_jobs << job_details
@@ -122,14 +154,17 @@ class Waylon < Sinatra::Application
               # description (or lack thereof), build an array of hashes to
               # determine if the failed job is already under investigation.
               last_build_num = job_details['lastBuild']['number']
-              if(client.job.get_build_details(job, last_build_num)['description'] =~ /under investigation/i)
+              last_build_descr = client.job.get_build_details(job, last_build_num)['description']
+
+              if(last_build_descr =~ /under investigation/i)
                 is_under_investigation = true
               else
                 is_under_investigation = false
               end
 
               @failed_builds << {
-                'job_name'               => job_details['name'],
+                'job_name'               => job,
+                'build_number'           => last_build_num,
                 'is_under_investigation' => is_under_investigation,
               }
             when 'success'
@@ -142,5 +177,39 @@ class Waylon < Sinatra::Application
 
     erb :data
   end
-end
 
+  # Investigate a failed build
+  #
+  get '/view/:view/:server/:job/:build/investigate' do
+    view     = CGI.unescape(params[:view])
+    server   = CGI.unescape(params[:server])
+    job      = CGI.unescape(params[:job])
+    build    = CGI.unescape(params[:build])
+    postdata = { 'description' => 'Under investigation' }
+    prefix   = "/job/#{job}/#{build}"
+
+    # We need to get the server URL from the configuration file, based on just
+    # the hostname, to keep the server's full URL (and all its special chars)
+    # out of the URI visible to the user. This whole thing is a hack and should
+    # be improved someday.
+    config = load_config()
+    config['views'].select { |h| h[view] }[0].values.flatten.each do |hash|
+      hash.keys.each do |server_url|
+        if(server_url =~ /#{server}/)
+            username = hash[server_url].select { |h| h['username'] }[0]['username']
+            password = hash[server_url].select { |h| h['password'] }[0]['password']
+
+            if(!username.empty? and !password.empty?)
+              client = JenkinsApi::Client.new(
+                :server_url => server_url,
+                :username   => username,
+                :password   => password,
+              )
+            end
+            client.api_post_request("#{prefix}/submitDescription", postdata)
+            redirect "#{server_url}/#{prefix}/"
+        end
+      end
+    end
+  end
+end

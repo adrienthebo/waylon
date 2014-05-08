@@ -8,6 +8,9 @@ Waylon is a dashboard to display the status of your Jenkins builds.
   * Displays only the desired jobs from one or more Jenkins instances
   * Displays build stability for each job (sunny, cloudy, raining)
   * Groups jobs by building, failed, and successful, and displays job counts for each
+  * Mark a failed build as 'under investigation' (requires the
+  [description-setter](https://wiki.jenkins-ci.org/display/JENKINS/Description+Setter+Plugin)
+  plugin)
   * Multiple views allows for multiple teams to utilize a single Waylon install
   * Nirvana mode displays a calming image of Oregon if all your jobs are green
 
@@ -20,7 +23,7 @@ git clone https://github.com/rji/waylon
 
 Modify `waylon_config.yml` to point to your Jenkins install, and enter any
 job names that you wish to display. For the most part, it's self-explanatory,
-but here's an example anyway for a few of [Puppet Labs](http://www.puppetlabs.com)'
+but here's an example for a few of [Puppet Labs](http://www.puppetlabs.com)'
 FOSS projects:
 
 ```yaml
@@ -30,6 +33,8 @@ config:
 views:
     - 'Puppet Labs - FOSS':
         - https://jenkins.puppetlabs.com:
+            - username: 'YOUR_USERNAME'
+            - password: 'YOUR_PASSWORD'
             - jobs:
                 - 'Puppet-Specs-master'
                 - 'Facter-Specs-master'

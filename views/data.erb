@@ -45,9 +45,11 @@
             %>
             <div class="investigate">
             <% if(@failed_builds.select { |h| h['job_name'] == job['name'] }[0]['is_under_investigation']) %>
-                <button type="button" class="btn btn-default disabled">Under investigation</button>
+                <a href="#" class="btn btn-default disabled" role="button">Under investigation</a>
             <% else %>
-                <button type="button" class="btn btn-default">Investigate</button>
+                <% this_server, _, this_job = job['url'].sub(/http[s]?:\/\//, '').split('/') %>
+                <% this_build_num = @failed_builds.select { |h| h['job_name'] == job['name'] }[0]['build_number'] %>
+                <a href="/view/<%= @this_view %>/<%= this_server %>/<%= this_job %>/<%= this_build_num %>/investigate" target="_blank" class="btn btn-default" role="button">Investigate</a>
             <% end %>
             </div>
         </td>
