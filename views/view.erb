@@ -17,7 +17,7 @@
 <script>
 var settings = {
     refresh_interval: <%= @refresh_interval %>,
-    datasource: '/view/<%= escape(@this_view) %>/data',
+    datasource: '/view/<%= h @this_view %>/data',
 };
 waylon.init(settings);
 </script>

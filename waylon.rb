@@ -1,13 +1,13 @@
 require 'sinatra'
+require 'cgi'
 require 'date'
 require 'jenkins_api_client'
 require 'yaml'
 
 class Waylon < Sinatra::Application
   helpers do
-    # escape() sanitizes text for use as a URL
-    def escape(text)
-      Rack::Utils.escape(text)
+    def h(text)
+      CGI::escape(text)
     end
 
     # get_views() does just that, gets a list of views.
@@ -67,7 +67,7 @@ class Waylon < Sinatra::Application
   # in the ERB templates for `view/foo` should be _just enough_ to refresh
   # the contents of <div class="waylon container"> with the latest data.
   get '/view/:name' do
-    @this_view = Rack::Utils.unescape(params[:name])
+    @this_view = CGI.unescape(params[:name])
     config = load_config()
 
     # Refresh the page every `refresh_interval` seconds.
@@ -83,7 +83,7 @@ class Waylon < Sinatra::Application
   # config (servers to connect to, and jobs to display). Returns HTML for the
   # jQuery in '/view/:name' to work with.
   get '/view/:name/data' do
-    @this_view = Rack::Utils.unescape(params[:name])
+    @this_view = CGI.unescape(params[:name])
     config = load_config()
 
     # For each Jenkins instance in a view, connect to the server, and get the
