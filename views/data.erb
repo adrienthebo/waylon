@@ -6,6 +6,13 @@
     </div>
     <% end %>
 <% end %>
+<% if(!@warnings.empty?) %>
+    <% @warnings.each do |warning| %>
+    <div class="alert alert-warning">
+        <strong>Best check yo'self.</strong> <%= warning %>
+    </div>
+    <% end %>
+<% end %>
 
 <div class="container stats-rollup">
     <h3>Successful <span class="label label-success"><%= @successful_jobs.count %></span></h3>

@@ -41,14 +41,20 @@ var waylon = {
     // found, returns false.
     nirvanaCheck: function () {
         'use strict';
-        var elems = ['.building-job', '.failed-job', '.alert-danger'],
-            count = 0;
+        var bad_elems  = ['.building-job', '.failed-job', '.alert-danger', '.alert-warning'],
+            good_elems = [ '.successful-job' ],
+            bad_count  = 0,
+            good_count = 0;
 
-        $.each(elems, function (i, elem) {
-            count += $(elem).length;
+        $.each(bad_elems, function (i, elem) {
+            bad_count += $(elem).length;
         });
 
-        if (count === 0) {
+        $.each(good_elems, function (i, elem) {
+            good_count += $(elem).length;
+        });
+
+        if ((bad_count === 0) && (good_count >= 1)) {
             return true;
         }
         else {

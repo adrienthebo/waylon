@@ -91,6 +91,7 @@ class Waylon < Sinatra::Application
     # status of the jobs specified in the config. Append job details to each
     # applicable array: successful, failed, and building.
     @errors          = []
+    @warnings        = []
     @failed_jobs     = []
     @failed_builds   = []
     @building_jobs   = []
@@ -142,6 +143,9 @@ class Waylon < Sinatra::Application
             rescue JenkinsApi::Exceptions::Unauthorized
               @errors << "Incorrect username or password for server: #{server}"
               break
+            rescue JenkinsApi::Exceptions::NotFound
+              @warnings << "Non-existent job \"#{job}\" on server #{server}"
+              next
             end
 
             case client.job.color_to_status(job_details['color'])
