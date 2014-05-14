@@ -5,6 +5,9 @@ body {
 .container {
     width: 90% !important;
 }
+.clear {
+    clear: both;
+}
 
 /* Global navigation */
 .navbar-default {
@@ -95,8 +98,33 @@ body {
 .failed-job     { background-color: #d9534f; }
 .successful-job { background-color: #5cb85c; }
 .weather        { margin: 0 5px;             }
-.investigate   { float: right; }
-.investigate a { color: black; }
+.job_action   { float: right; }
+.job_action a { color: black; }
+.infinity {
+    color: #d9534f;
+    font-size: 1.75em;
+    line-height: 50%
+}
+.progress, .progress-bar, .progress-bar-danger {
+    background-image: none;
+    background-repeat: no-repeat;
+    filter: none;
+}
+.progress {
+    height: 5px;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    background-color: #f0ad4e;
+    border-radius: 4px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+.progress-bar {
+    background-color: #fff;
+}
+.progress-bar-danger {
+    background-color: #d9534f;
+}
 
 /* Nirvana mode */
 body.nirvana {

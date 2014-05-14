@@ -28,6 +28,30 @@
         <td>
             <img class="weather" src="<%= weather['src'] %>" alt="<%= weather['alt'] %>" data-toggle="tooltip" title="<%= weather['title'] %>"></img>
             <a href="<%= job['url'] %>"><%= job['name'] %></a>
+
+            <div class="job_action">
+
+            <% t = @job_progress.select { |h| h['job_name'] == job['name'] }[0]['eta'] %>
+            <% p = @job_progress.select { |h| h['job_name'] == job['name'] }[0]['progress_pct'] %>
+            <% mm, ss = t.divmod(60) unless t == -1 %>
+
+            <%# if p is -1, the build is stuck %>
+            <% if(p == -1) %>
+            <span class="glyphicon glyphicon-time" data-toggle="tooltip" title="Estimated time remaining"></span> <span class="infinity">&infin;</span>
+            </div>
+            <br class="clear" />
+            <div class="progress">
+                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="width:90%"></div>
+            <%# otherwise all is good %>
+            <% else %>
+            <span class="glyphicon glyphicon-time" data-toggle="tooltip" title="Estimated time remaining"></span> <%= "%dm %ds" % [mm, ss] %>
+            </div>
+            <br class="clear" />
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="<%= p %>" aria-valuemin="0" aria-valuemax="100" style="width:<%= p %>%"></div>
+            <% end %>
+
+            </div>
         </td>
     </tr>
     <% end %>
@@ -50,7 +74,7 @@
             # disabled button and not allow the user to take further
             # action.
             %>
-            <div class="investigate">
+            <div class="job_action">
             <% if(@failed_builds.select { |h| h['job_name'] == job['name'] }[0]['is_under_investigation']) %>
                 <a href="#" class="btn btn-default disabled" role="button">Under investigation</a>
             <% else %>

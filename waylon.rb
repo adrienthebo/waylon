@@ -95,6 +95,7 @@ class Waylon < Sinatra::Application
     @failed_jobs     = []
     @failed_builds   = []
     @building_jobs   = []
+    @job_progress    = []
     @successful_jobs = []
 
     config['views'].select { |h| h[@this_view] }[0].each do |_, servers|
@@ -151,6 +152,36 @@ class Waylon < Sinatra::Application
             case client.job.color_to_status(job_details['color'])
             when 'running'
               @building_jobs << job_details
+
+              # The values we need for getting progress and estimating time
+              # remaining aren't available in jenkins_api_client's methods.
+              # Luckily, api_get_request() is public and we can re-use our
+              # existing connection.
+              est_duration = client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=2&tree=estimatedDuration")['estimatedDuration']
+
+              progress_pct = String.new
+              begin
+                client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=3")['runs'].each do |run|
+                  progress_pct = run['executor']['progress']
+                end
+                # A build's 'duration' in the Jenkins API is only available
+                # after it has completed. Using estimatedDuration and the
+                # executor progress (in percentage), we can calculate the ETA.
+                # Note that estimatedDuration is returned in ms and here we
+                # convert it to seconds.
+                eta = (est_duration - (est_duration * (progress_pct / 100.0))) / 1000
+              rescue NoMethodError
+                # the build is stuck, or something horrible happened
+                progress_pct = -1
+                eta          = -1
+              ensure
+                @job_progress << {
+                  'job_name'     => job,
+                  'progress_pct' => progress_pct,
+                  'eta'          => eta
+                }
+                next
+              end
             when 'failure'
               @failed_jobs << job_details
 
