@@ -21,10 +21,10 @@ class Waylon < Sinatra::Application
       return views
     end
 
-    # load_config() opens waylon_config.yml, parses it, and returns
+    # load_config() opens config/waylon.yml, parses it, and returns
     def load_config()
       root = File.dirname(__FILE__)
-      config = YAML.load_file(File.join(root, 'waylon_config.yml'))
+      config = YAML.load_file(File.join(root, 'config/waylon.yml'))
       return config
     end
 
@@ -80,7 +80,7 @@ class Waylon < Sinatra::Application
   end
 
   # Individual views' data (`/view/foo/data`)
-  # When navigating to 'view/foo/data', queries waylon_config.yml for that
+  # When navigating to 'view/foo/data', queries config/waylon.yml for that
   # view's config (servers to connect to, and jobs to display). Returns an
   # HTML table for the jQuery in '/view/:name' to load and display.
   get '/view/:name/data' do

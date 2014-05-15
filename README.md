@@ -21,15 +21,15 @@ Clone the repo:
 git clone https://github.com/rji/waylon
 ```
 
-Modify `waylon_config.yml` to point to your Jenkins install, and enter any
-job names that you wish to display. For the most part, it's self-explanatory,
-but here's an example for a few of [Puppet Labs](http://www.puppetlabs.com)'
-FOSS projects:
+Modify `config/waylon.yml` to point to your Jenkins install, and enter
+any job names that you wish to display. For the most part, it's
+self-explanatory, but here's an example for a few of
+[Puppet Labs](http://www.puppetlabs.com)' FOSS projects:
 
 ```yaml
 ---
 config:
-    - refresh_interval: 30  # page refresh interval (in seconds)
+    - refresh_interval: 60  # page refresh interval (in seconds)
 views:
     - 'Puppet Labs - FOSS':
         - https://jenkins.puppetlabs.com:
@@ -43,14 +43,25 @@ views:
 
 ## Deploy
 You can deploy locally, on your LAN, or if you have a public Jenkins instance,
-push the whole thing to Heroku. If deployed locally, the application will make
-use of the Thin webserver, and run on port 9292 (by default).
+or push the whole thing to Heroku.
+
+For development, running `rackup` will launch the app with WEBrick on port 9292:
 
 ```
 $ bundle exec rackup
-Thin web server (v1.6.2 codename Doc Brown)
-Maximum connections set to 1024
-Listening on 0.0.0.0:9292, CTRL+C to stop
+[2014-05-15 10:36:33] INFO  WEBrick 1.3.1
+[2014-05-15 10:36:33] INFO  ruby 2.1.1 (2014-02-24) [x86_64-darwin13.0]
+[2014-05-15 10:36:33] INFO  WEBrick::HTTPServer#start: pid=41331 port=9292
+```
+
+For deploying the app, you might consider Unicorn, modifying
+`config/unicorn.rb` as needed. In it's absolute simplest form, this is:
+
+```
+$ bundle exec unicorn -c config/unicorn.rb
+I, [2014-05-15T10:38:08.425598 #41334]  INFO -- : listening on addr=0.0.0.0:8080 fd=9
+I, [2014-05-15T10:38:08.425707 #41334]  INFO -- : worker=0 spawning...
+I, [2014-05-15T10:38:08.426279 #41334]  INFO -- : worker=1 spawning...
 ```
 
 ## Screenshots
