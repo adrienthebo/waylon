@@ -93,7 +93,6 @@ class Waylon < Sinatra::Application
   # HTML table for the jQuery in '/view/:name' to load and display.
   get '/view/:name/data' do
     @this_view = CGI.unescape(params[:name])
-    config = load_config()
 
     # For each Jenkins instance in a view, connect to the server, and get the
     # status of the jobs specified in the config. Append job details to each
@@ -106,114 +105,117 @@ class Waylon < Sinatra::Application
     @job_progress    = []
     @successful_jobs = []
 
-    config['views'].select { |h| h[@this_view] }[0].each do |_, servers|
-      servers.each do |hash|
-        hash.keys.each do |server|
+    view_config = gen_config.views.find { |view| view.name == @this_view }
 
-          # This is wrapped inside a block to ensure that we display an error
-          # if the user has an improperly-formatted YAML file. That is, they
-          # have omitted 'username', 'password' or both. If that's the case,
-          # a NoMethodError will be raised.
+    if view_config.nil?
+      @errors << "Couldn't find view #{@this_view}!"
+      halt 404
+    end
+
+
+    view_config.servers.each do |server|
+      # This is wrapped inside a block to ensure that we display an error
+      # if the user has an improperly-formatted YAML file. That is, they
+      # have omitted 'username', 'password' or both. If that's the case,
+      # a NoMethodError will be raised.
+      begin
+        username = server.username
+        password = server.password
+
+        if(!username.empty? and !password.empty?)
+          client = JenkinsApi::Client.new(
+            :server_url => server.url,
+            :username   => username,
+            :password   => password,
+          )
+        else
+          @errors << "No credentials provided for server: #{server}"
+          next
+        end
+      rescue NoMethodError
+        @errors << "No credentials provided for server: #{server}"
+        next
+      end
+
+      begin
+        client.get_root  # Attempt a connection to `server`
+      rescue SocketError
+        @errors << "Unable to connect to server: #{server}"
+        next
+      rescue Errno::ETIMEDOUT
+        @errors << "Timed out while connecting to server: #{server}"
+        next
+      end
+
+      server.jobs.each do |job|
+
+        # jenkins_api_client won't throw an Unauthorized exception until
+        # we really try doing something, like calling list_details()
+        begin
+          job_details = client.job.list_details(job)
+        rescue JenkinsApi::Exceptions::Unauthorized
+          @errors << "Incorrect username or password for server: #{server}"
+          break
+        rescue JenkinsApi::Exceptions::NotFound
+          @warnings << "Non-existent job \"#{job}\" on server #{server}"
+          next
+        end
+
+        case client.job.color_to_status(job_details['color'])
+        when 'running'
+          @building_jobs << job_details
+
+          # The values we need for getting progress and estimating time
+          # remaining aren't available in jenkins_api_client's methods.
+          # Luckily, api_get_request() is public and we can re-use our
+          # existing connection.
+          est_duration = client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=2&tree=estimatedDuration")['estimatedDuration']
+
+          progress_pct = String.new
           begin
-            username = hash[server].select { |h| h['username'] }[0]['username']
-            password = hash[server].select { |h| h['password'] }[0]['password']
-
-            if(!username.empty? and !password.empty?)
-              client = JenkinsApi::Client.new(
-                :server_url => server,
-                :username   => username,
-                :password   => password,
-              )
-            else
-              @errors << "No credentials provided for server: #{server}"
-              next
+            client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=3")['runs'].each do |run|
+              progress_pct = run['executor']['progress']
             end
+            # A build's 'duration' in the Jenkins API is only available
+            # after it has completed. Using estimatedDuration and the
+            # executor progress (in percentage), we can calculate the ETA.
+            # Note that estimatedDuration is returned in ms and here we
+            # convert it to seconds.
+            eta = (est_duration - (est_duration * (progress_pct / 100.0))) / 1000
           rescue NoMethodError
-            @errors << "No credentials provided for server: #{server}"
+            # the build is stuck, or something horrible happened
+            progress_pct = -1
+            eta          = -1
+          ensure
+            @job_progress << {
+              'job_name'     => job,
+              'progress_pct' => progress_pct,
+              'eta'          => eta
+            }
             next
           end
+        when 'failure'
+          @failed_jobs << job_details
 
-          begin
-            client.get_root  # Attempt a connection to `server`
-          rescue SocketError
-            @errors << "Unable to connect to server: #{server}"
-            next
-          rescue Errno::ETIMEDOUT
-            @errors << "Timed out while connecting to server: #{server}"
-            next
+          # We already know the job is in 'failed' state. Using the build
+          # description (or lack thereof), build an array of hashes to
+          # determine if the failed job is already under investigation.
+          last_build_num = job_details['lastBuild']['number']
+          last_build_descr = client.job.get_build_details(job, last_build_num)['description']
+
+          if(last_build_descr =~ /under investigation/i)
+            is_under_investigation = true
+          else
+            is_under_investigation = false
           end
 
-          hash[server].select { |h| h['jobs'] }[0]['jobs'].each do |job|
-
-            # jenkins_api_client won't throw an Unauthorized exception until
-            # we really try doing something, like calling list_details()
-            begin
-              job_details = client.job.list_details(job)
-            rescue JenkinsApi::Exceptions::Unauthorized
-              @errors << "Incorrect username or password for server: #{server}"
-              break
-            rescue JenkinsApi::Exceptions::NotFound
-              @warnings << "Non-existent job \"#{job}\" on server #{server}"
-              next
-            end
-
-            case client.job.color_to_status(job_details['color'])
-            when 'running'
-              @building_jobs << job_details
-
-              # The values we need for getting progress and estimating time
-              # remaining aren't available in jenkins_api_client's methods.
-              # Luckily, api_get_request() is public and we can re-use our
-              # existing connection.
-              est_duration = client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=2&tree=estimatedDuration")['estimatedDuration']
-
-              progress_pct = String.new
-              begin
-                client.api_get_request("/job/#{job}/lastBuild", nil, "/api/json?depth=3")['runs'].each do |run|
-                  progress_pct = run['executor']['progress']
-                end
-                # A build's 'duration' in the Jenkins API is only available
-                # after it has completed. Using estimatedDuration and the
-                # executor progress (in percentage), we can calculate the ETA.
-                # Note that estimatedDuration is returned in ms and here we
-                # convert it to seconds.
-                eta = (est_duration - (est_duration * (progress_pct / 100.0))) / 1000
-              rescue NoMethodError
-                # the build is stuck, or something horrible happened
-                progress_pct = -1
-                eta          = -1
-              ensure
-                @job_progress << {
-                  'job_name'     => job,
-                  'progress_pct' => progress_pct,
-                  'eta'          => eta
-                }
-                next
-              end
-            when 'failure'
-              @failed_jobs << job_details
-
-              # We already know the job is in 'failed' state. Using the build
-              # description (or lack thereof), build an array of hashes to
-              # determine if the failed job is already under investigation.
-              last_build_num = job_details['lastBuild']['number']
-              last_build_descr = client.job.get_build_details(job, last_build_num)['description']
-
-              if(last_build_descr =~ /under investigation/i)
-                is_under_investigation = true
-              else
-                is_under_investigation = false
-              end
-
-              @failed_builds << {
-                'job_name'               => job,
-                'build_number'           => last_build_num,
-                'is_under_investigation' => is_under_investigation,
-              }
-            when 'success'
-              @successful_jobs << job_details
-            end
-          end
+          @failed_builds << {
+            'job_name'               => job,
+            'build_number'           => last_build_num,
+            'is_under_investigation' => is_under_investigation,
+          }
+        when 'success'
+          @successful_jobs << job_details
         end
       end
     end
