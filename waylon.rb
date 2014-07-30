@@ -72,11 +72,15 @@ class Waylon < Sinatra::Application
   # in the ERB templates for `view/foo` should be _just enough_ to refresh
   # the contents of <div class="waylon container"> with the latest data.
   get '/view/:name' do
+    config = gen_config
     @this_view = CGI.unescape(params[:name])
-    config = load_config()
+    @refresh_interval = config.app_config.refresh_interval
 
-    # Refresh the page every `refresh_interval` seconds.
-    @refresh_interval = config['config'][0]['refresh_interval'].to_i
+    view_config = config.views.find { |view| view.name == @this_view }
+
+    if view_config.nil?
+      @errors = [ "Couldn't find view #{@this_view}!"]
+    end
 
     erb :base do
       erb :view
