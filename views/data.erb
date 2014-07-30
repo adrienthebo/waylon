@@ -1,18 +1,5 @@
-<br />
-<% if(!@errors.empty?) %>
-    <% @errors.each do |error| %>
-    <div class="alert alert-danger">
-        <strong>Oh snap!</strong> <%= error %>
-    </div>
-    <% end %>
-<% end %>
-<% if(!@warnings.empty?) %>
-    <% @warnings.each do |warning| %>
-    <div class="alert alert-warning">
-        <strong>Best check yo'self.</strong> <%= warning %>
-    </div>
-    <% end %>
-<% end %>
+<%= erb :_errors %>
+<%= erb :_warnings %>
 
 <div class="container stats-rollup">
     <h3>Successful <span class="label label-success"><%= @successful_jobs.count %></span></h3>

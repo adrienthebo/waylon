@@ -1,0 +1,10 @@
+<% if(@warnings && !@warnings.empty?) %>
+    <div class="alert alert-warning">
+        <strong>Best check yo'self.</strong>
+        <ul>
+        <% @warnings.each do |warning| %>
+          <li><%= warning %></li>
+        <% end %>
+      </ul>
+    </div>
+<% end %>

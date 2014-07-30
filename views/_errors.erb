@@ -1,0 +1,10 @@
+<% if(@errors && !@errors.empty?) %>
+    <div class="alert alert-danger">
+        <strong>Oh snap!</strong>
+        <ul>
+        <% @errors.each do |error| %>
+          <li><%= error %></li>
+        <% end %>
+        </ul>
+    </div>
+<% end %>

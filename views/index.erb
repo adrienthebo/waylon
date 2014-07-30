@@ -1,8 +1,10 @@
-<div class="container waylon landing">
+<div class="container waylon">
+<div class="landing">
     <p>The following views are available on this instance:</p>
     <ul>
         <% get_views().each do |view| %>
             <li><a href="/view/<%= view %>"><%= view %></a></li>
     <% end %>
     </ul>
+</div>
 </div>
