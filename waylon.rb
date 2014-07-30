@@ -4,7 +4,12 @@ require 'date'
 require 'jenkins_api_client'
 require 'yaml'
 
+$LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
+
+
 class Waylon < Sinatra::Application
+  require 'waylon/root_config'
+
   helpers do
     def h(text)
       CGI::escape(text)
@@ -13,12 +18,11 @@ class Waylon < Sinatra::Application
     # get_views() does just that, gets a list of views from
     # the config file and returns an array of strings.
     def get_views()
-      config = load_config()
-      views = []
-      config['views'].each do |view|
-        views += view.keys
-      end
-      return views
+      gen_config.views.map(&:name)
+    end
+
+    def gen_config
+      Waylon::RootConfig.from_hash(load_config)
     end
 
     # load_config() opens config/waylon.yml, parses it, and returns
