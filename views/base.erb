@@ -32,6 +32,14 @@
     </div>
 </div>
 
+<% if( @errors and !@errors.empty?) %>
+    <% @errors.each do |error| %>
+    <div class="alert alert-danger">
+        <strong>Oh snap!</strong> <%= error %>
+    </div>
+    <% end %>
+<% end %>
+
 <%= yield %>
 
 </body>
