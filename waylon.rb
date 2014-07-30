@@ -154,10 +154,10 @@ class Waylon < Sinatra::Application
         begin
           job_details = client.job.list_details(job)
         rescue JenkinsApi::Exceptions::Unauthorized
-          @errors << "Incorrect username or password for server: #{server}"
+          @errors << "Incorrect username or password for server: #{server.url}"
           break
         rescue JenkinsApi::Exceptions::NotFound
-          @warnings << "Non-existent job \"#{job}\" on server #{server}"
+          @warnings << "Non-existent job \"#{job}\" on server #{server.url}"
           next
         end
 
