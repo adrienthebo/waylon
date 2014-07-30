@@ -226,7 +226,6 @@ class Waylon < Sinatra::Application
   # Investigate a failed build
   #
   get '/view/:view/:server/:job/:build/investigate' do
-    view     = CGI.unescape(params[:view])
     server   = CGI.unescape(params[:server])
     job      = CGI.unescape(params[:job])
     build    = CGI.unescape(params[:build])
@@ -237,24 +236,30 @@ class Waylon < Sinatra::Application
     # the hostname, to keep the server's full URL (and all its special chars)
     # out of the URI visible to the user. This whole thing is a hack and should
     # be improved someday.
-    config = load_config()
-    config['views'].select { |h| h[view] }[0].values.flatten.each do |hash|
-      hash.keys.each do |server_url|
-        if(server_url =~ /#{server}/)
-            username = hash[server_url].select { |h| h['username'] }[0]['username']
-            password = hash[server_url].select { |h| h['password'] }[0]['password']
+    gen_config.views.each do |view|
+      view.servers.each do |config_server|
+        if config_server.url =~ /#{server}/
+          if(!username.empty? and !password.empty?)
+            client = JenkinsApi::Client.new(
+              :server_url => server_url,
+              :username   => username,
+              :password   => password,
+            )
+          end
 
-            if(!username.empty? and !password.empty?)
-              client = JenkinsApi::Client.new(
-                :server_url => server_url,
-                :username   => username,
-                :password   => password,
-              )
-            end
-            client.api_post_request("#{prefix}/submitDescription", postdata)
-            redirect "#{server_url}/#{prefix}/"
+          client.api_post_request("#{prefix}/submitDescription", postdata)
+          redirect "#{server_url}/#{prefix}/"
         end
       end
+    end
+
+    @errors = []
+    @errors << "We couldn't find a server in our config for #{server}!"
+
+    @this_view = 'index'
+
+    erb :base do
+      erb :index
     end
   end
 end
