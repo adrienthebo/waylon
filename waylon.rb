@@ -22,14 +22,9 @@ class Waylon < Sinatra::Application
     end
 
     def gen_config
-      Waylon::RootConfig.from_hash(load_config)
-    end
-
-    # load_config() opens config/waylon.yml, parses it, and returns
-    def load_config()
       root = File.dirname(__FILE__)
       config = YAML.load_file(File.join(root, 'config/waylon.yml'))
-      return config
+      Waylon::RootConfig.from_hash(config)
     end
 
     # weather() returns an img src, alt, and title, based on build stability
