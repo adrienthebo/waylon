@@ -4,6 +4,7 @@ class Waylon
   class Server
     require 'waylon/job'
 
+    attr_reader :name
     attr_reader :url
     attr_reader :username
     attr_reader :password
@@ -12,15 +13,16 @@ class Waylon
 
     attr_reader :client
 
-    def self.from_hash(url, values)
-      o = new(url, values['username'], values['password'])
+    def self.from_hash(name, values)
+      o = new(name, values['url'], values['username'], values['password'])
       (values['jobs'] || []).each do |job|
         o.add_job(job)
       end
       o
     end
 
-    def initialize(url, username, password)
+    def initialize(name, url, username, password)
+      @name = name
       @url = url
       @username = username
       @password = password

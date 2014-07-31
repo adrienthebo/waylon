@@ -7,8 +7,8 @@ class Waylon
 
     def self.from_hash(name, servers)
       o = new(name)
-      servers.each_pair do |url, values|
-        o.servers << Waylon::Server.from_hash(url, values)
+      servers.each_pair do |server_name, values|
+        o.servers << Waylon::Server.from_hash(server_name, values)
       end
       o
     end
