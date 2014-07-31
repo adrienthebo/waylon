@@ -1,6 +1,7 @@
 var ex = {
 
     config: {
+        server: 'jenkins-foss',
         refresh_interval: 60
     },
 
@@ -47,6 +48,10 @@ var ex = {
     buildJobs: function(json) {
         'use strict';
         $("#jobs").empty();
+
+        $(document).ajaxStop(function() {
+            ex.sortTable();
+        });
         $.each(json.jobs, function(i, item) {
             var tr = $("<tr>").append(
                 $("<td>").text(item),
@@ -55,11 +60,10 @@ var ex = {
             tr.addClass("unknown-job");
             tr.attr("status", "unknown-job");
             $("#jobs").append(tr);
-            ex.populateJob(ex.config.view, ex.config.server, item, tr);
 
+            ex.populateJob(ex.config.view, ex.config.server, item, tr);
         });
     },
-
 
     populateJob: function(view, server, job, e) {
         'use strict';
@@ -74,11 +78,6 @@ var ex = {
 
                 var link = $("<a>").attr("href", json["url"]).text(job);
 
-                e.append(
-                    $("<td>").html(link),
-                    $("<td>").text(json["status"])
-                );
-
                 var stat;
                 switch(json["status"]) {
                     case "running":
@@ -91,6 +90,11 @@ var ex = {
                         stat = "successful-job";
                 }
 
+                e.append(
+                    $("<td>").html(link),
+                    $("<td>").text(json["status"])
+                );
+
                 if(stat) {
                     e.removeClass("unknown-job");
                     e.addClass(stat);
@@ -99,4 +103,39 @@ var ex = {
             }
         });
     },
+
+    sortTable: function() {
+        var children = $("#jobs tbody").children();
+
+        children.sort(function(a, b) {
+            var as = ex.sortValue($(a).attr("status"));
+            var bs = ex.sortValue($(b).attr("status"));
+
+            if (as > bs) {
+                return -1;
+            } else if (as < bs) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        children.detach().appendTo($("#jobs tbody"));
+    },
+
+    sortValue: function(x) {
+        switch(x) {
+            case "failed-job":
+                return 3;
+            case "building-job":
+                return 2;
+            case "unknown-job":
+                return 1;
+            case "successful-job":
+                return 0;
+            default:
+                return -1;
+        }
+
+    }
 };
