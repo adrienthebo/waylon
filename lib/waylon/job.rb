@@ -69,5 +69,14 @@ class Waylon
     def last_build_num
       job_details['lastBuild']['number']
     end
+
+    def to_hash
+      {
+        'name'   => @name,
+        'url'    => @job_details['url'],
+        'status' => status,
+        # weather?
+      }
+    end
   end
 end

@@ -40,5 +40,13 @@ class Waylon
     def verify_client!
       @client.get_root  # Attempt a connection to `server`
     end
+
+    def to_config
+      {
+        'name' => @name,
+        'url'  => @url,
+        'jobs' => @jobs.map(&:name)
+      }
+    end
   end
 end

@@ -160,6 +160,40 @@ class Waylon < Sinatra::Application
     erb :data
   end
 
+  get '/api/view/:view.json' do
+    view_name = CGI.unescape(params[:view])
+    view_config = gen_config.views.find { |view| view.name == view_name }
+    view_config.to_config.to_json
+  end
+
+  get '/api/view/:view/server/:server.json' do
+    view_name = CGI.unescape(params[:view])
+    server_name = CGI.unescape(params[:server])
+    view_config = gen_config.views.find { |view| view.name == view_name }
+    server_config = view_config.servers.find { |server| server.name == server_name }
+    server_config.to_config.to_json
+  end
+
+  get '/api/view/:view/server/:server/jobs.json' do
+    view_name = CGI.unescape(params[:view])
+    server_name = CGI.unescape(params[:server])
+    view_config = gen_config.views.find { |view| view.name == view_name }
+    server_config = view_config.servers.find { |server| server.name == server_name }
+    server_config.jobs.map(&:name).to_json
+  end
+
+  get '/api/view/:view/server/:server/job/:job.json' do
+    view_name   = CGI.unescape(params[:view])
+    server_name = CGI.unescape(params[:server])
+    job_name    = CGI.unescape(params[:job])
+
+    view_config = gen_config.views.find { |view| view.name == view_name }
+    server_config = view_config.servers.find { |server| server.name == server_name }
+    job_config    = server_config.jobs.find { |job| job.name == job_name }
+    job_config.query!
+    job_config.to_hash.to_json
+  end
+
   # Investigate a failed build
   #
   get '/view/:view/:server/:job/:build/investigate' do
