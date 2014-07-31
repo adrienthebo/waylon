@@ -82,6 +82,13 @@ class Waylon < Sinatra::Application
     end
   end
 
+  get '/x/:name' do
+    @view_name = CGI.unescape(params[:name])
+    erb :base do
+      erb :x
+    end
+  end
+
   # Individual views' data (`/view/foo/data`)
   # When navigating to 'view/foo/data', queries config/waylon.yml for that
   # view's config (servers to connect to, and jobs to display). Returns an

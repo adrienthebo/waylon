@@ -1,0 +1,23 @@
+<!-- If you're looking at the source of this page and wondering why
+     this div is empty, here's why: #radiator is a place-holder div
+     for jQuery, which dynamically writes HTML here from "./data".
+     The #loading div below is shown and hidden based on a conditional
+     at the bottom of this page.
+-->
+<div id="loading">
+    <span class="glyphicon glyphicon-refresh loadingIndicator"></span>
+    <p>Getting the latest data, just for you.</p>
+</div>
+<table class="table" id="jobs"></table>
+
+<script src="/js/jquery-1.11.0.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/ex.js"></script>
+<script>
+var settings = {
+    refresh_interval: 60,
+    view: "<%= @view_name %>"
+};
+ex.init(settings);
+</script>
+
