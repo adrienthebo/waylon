@@ -45,7 +45,7 @@ body {
 }
 
 /* Radiator view */
-#radiator #loading {
+#loading {
     color: #999;
     margin-top: 150px;
     text-align: center;
