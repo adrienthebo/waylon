@@ -39,9 +39,6 @@ class Waylon
                   run_pct
                 end
         accum
-      end.tap do |x|
-        require 'pry'
-        binding.pry if x.nil?
       end
     rescue JenkinsApi::Exceptions::InternalServerError
       -1
