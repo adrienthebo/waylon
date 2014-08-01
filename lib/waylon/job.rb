@@ -1,3 +1,4 @@
+require 'waylon/errors'
 class Waylon
   class Job
 
@@ -14,6 +15,9 @@ class Waylon
 
     def query!
       @job_details = client.job.list_details(@name)
+      self
+    rescue JenkinsApi::Exceptions::NotFound
+      raise Waylon::Errors::NotFound
     end
 
     def status

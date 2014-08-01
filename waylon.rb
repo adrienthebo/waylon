@@ -3,12 +3,14 @@ require 'cgi'
 require 'date'
 require 'jenkins_api_client'
 require 'yaml'
+require 'deterministic'
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), 'lib')
 
 
 class Waylon < Sinatra::Application
   require 'waylon/root_config'
+  include Deterministic
 
   helpers do
     def h(text)
@@ -48,6 +50,18 @@ class Waylon < Sinatra::Application
           'alt' => '[umbrella]',
           'title' => '2 or more of the last 5 builds failed'
         }
+      end
+    end
+
+    def manadic(monad)
+      if monad.success?
+        status 200
+        body(monad.value.to_json)
+      elsif monad.value.is_a? Waylon::Errors::NotFound
+        status 404
+        body({"errors" => [monad.value.message]}.to_json)
+      else
+        raise monad.value
       end
     end
   end
@@ -169,24 +183,33 @@ class Waylon < Sinatra::Application
 
   get '/api/view/:view.json' do
     view_name = CGI.unescape(params[:view])
-    view_config = gen_config.views.find { |view| view.name == view_name }
-    view_config.to_config.to_json
+
+    manadic(Either.attempt_all(self) do
+      try { gen_config.view(view_name) }
+      try { |view| view.to_config }
+    end)
   end
 
   get '/api/view/:view/server/:server.json' do
     view_name = CGI.unescape(params[:view])
     server_name = CGI.unescape(params[:server])
-    view_config = gen_config.views.find { |view| view.name == view_name }
-    server_config = view_config.servers.find { |server| server.name == server_name }
-    server_config.to_config.to_json
+
+    manadic(Either.attempt_all(self) do
+      try { gen_config.view(view_name) }
+      try { |view| view.server(server_name) }
+      try { |server| server.to_config }
+    end)
   end
 
   get '/api/view/:view/server/:server/jobs.json' do
     view_name = CGI.unescape(params[:view])
     server_name = CGI.unescape(params[:server])
-    view_config = gen_config.views.find { |view| view.name == view_name }
-    server_config = view_config.servers.find { |server| server.name == server_name }
-    server_config.jobs.map(&:name).to_json
+
+    manadic(Either.attempt_all(self) do
+      try { gen_config.view(view_name) }
+      try { |view| view.server(server_name) }
+      try { |server| server.jobs.map(&:name) }
+    end)
   end
 
   get '/api/view/:view/server/:server/job/:job.json' do
@@ -194,11 +217,12 @@ class Waylon < Sinatra::Application
     server_name = CGI.unescape(params[:server])
     job_name    = CGI.unescape(params[:job])
 
-    view_config = gen_config.views.find { |view| view.name == view_name }
-    server_config = view_config.servers.find { |server| server.name == server_name }
-    job_config    = server_config.jobs.find { |job| job.name == job_name }
-    job_config.query!
-    job_config.to_hash.to_json
+    manadic(Either.attempt_all(self) do
+      try { gen_config.view(view_name) }
+      try { |view| view.server(server_name) }
+      try { |server| server.job(job_name) }
+      try { |job| job.query!.to_hash }
+    end)
   end
 
   # Investigate a failed build

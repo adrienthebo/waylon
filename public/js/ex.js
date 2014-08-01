@@ -100,6 +100,7 @@ var ex = {
                     e.addClass(stat);
                     e.attr("status", stat);
                 }
+                ex.sortTable();
             }
         });
     },

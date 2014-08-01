@@ -1,4 +1,5 @@
 require 'waylon/server'
+require 'waylon/errors'
 
 class Waylon
   class View
@@ -23,6 +24,12 @@ class Waylon
         'name' => @name,
         'servers' => @servers.map(&:url)
       }
+    end
+
+    def server(name)
+      @servers.find { |server| server.name == name }.tap do |x|
+        raise Waylon::Errors::NotFound "Cannot find server named #{name}" if x.nil?
+      end
     end
   end
 end

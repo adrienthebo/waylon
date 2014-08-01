@@ -1,3 +1,5 @@
+require 'waylon/errors'
+
 class Waylon
   class RootConfig
 
@@ -14,5 +16,10 @@ class Waylon
       end
     end
 
+    def view(name)
+      @views.find { |view| view.name == name }.tap do |x|
+        raise Waylon::Errors::NotFound, "Cannot find view named #{name}" if x.nil?
+      end
+    end
   end
 end
